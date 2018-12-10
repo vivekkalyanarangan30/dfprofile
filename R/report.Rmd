@@ -27,7 +27,7 @@ library(ggplot2)
 ```
 
 ```{r helpers, echo=FALSE}
-source('./helpers.R')
+source('helpers/helpers.R')
 
 ```
 
