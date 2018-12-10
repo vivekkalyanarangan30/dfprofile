@@ -1,6 +1,6 @@
-library("rmarkdown")
-library("dplyr")
-library("ggplot2")
+library(rmarkdown)
+library(dplyr)
+library(ggplot2)
 
 #' Generates profile reports from a DataFrame. The existing implementations are great but a little basic for serious exploratory data analysis.
 #'

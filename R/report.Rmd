@@ -27,7 +27,7 @@ library(ggplot2)
 ```
 
 ```{r helpers, echo=FALSE}
-source('helpers/helpers.R')
+source(system.file("helpers", "helpers.R", package = "dfprofile"))
 
 ```
 
