@@ -141,7 +141,7 @@ for (i in colnames(df)) {
   ")
   out = c(out, knit_expand(text=html_report))
   
-  out = c(out, text=kexpand(3,'fig1',.p1, counter))
+  out = c(out, text=.kexpand(3,'fig1',.p1, counter))
   
   }else{
     

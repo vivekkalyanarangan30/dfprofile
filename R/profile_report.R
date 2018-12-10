@@ -19,7 +19,7 @@ profile_report <- function(df,output_file_path,missing_threshold=0.30,
   if(class(df)=="data.frame"){
     output_format_extn <- "html_document"
 
-    render(input="./R/report.Rmd", output_format=output_format_extn,
+    render(input="./report.Rmd", output_format=output_format_extn,
            params=list(df = df, missing_threshold = missing_threshold,
                        cardinality_threshold=cardinality_threshold,
                        skewness_threshold=skewness_threshold),
