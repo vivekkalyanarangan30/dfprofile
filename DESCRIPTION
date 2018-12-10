@@ -23,7 +23,7 @@ Imports:
     ggplot2,
     rmarkdown
 Depends:
-knitr,
+    knitr,
     kableExtra,
     moments,
     dplyr,
