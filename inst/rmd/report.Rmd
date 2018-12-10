@@ -1,0 +1,162 @@
+---
+output: 
+  html_document:
+    theme: default
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+params:
+  df: "data.frame"
+  missing_threshold: 0.15
+  cardinality_threshold: 50
+  skewness_threshold: 20
+---
+
+```{r setup, include=FALSE,message=FALSE,warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+options(knitr.table.format = "html") 
+
+library(knitr)
+library(kableExtra)
+library(moments)
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+
+```
+
+```{r helpers, echo=FALSE}
+source('./helpers.R')
+
+```
+
+# Overview {.tabset}
+
+## Dataset Info
+```{r dataset_info, message=FALSE,warning=FALSE}
+df_info <- get_info(df)
+df_info %>%
+  kable(format = "html", escape = F) %>%
+  kable_styling("striped", full_width = F, bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "left")
+
+```
+
+## Variable Types
+```{r var_types, message=FALSE,warning=FALSE}
+var_summary <- get_var_types(df)
+kable(var_summary) %>%
+  kable_styling(full_width = F, bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "left")
+
+```
+
+# Warnings
+```{r warnings, message=FALSE,warning=FALSE}
+df_warnings <- get_full_warnings(df,missing_threshold,cardinality_threshold,skewness_threshold)
+
+if(nrow(df_warnings) > 0){
+  df_warnings$Column_Name <- paste0("[",df_warnings$Column_Name,"](#",tolower(df_warnings$Column_Name),")")
+}
+df_warnings %>%
+  mutate(
+    Type = cell_spec(Type, "html", color = "white", align = "c", 
+                    background = factor(Type, c("Warning", "Missing", "Skewed", "Zeros", "Rejected"), c("#FF8800", "#3E4551", "#aa66cc","#33b5e5", "#CC0000")))
+  ) %>%
+  #select(Column_Name, Type, Comments) %>%
+  kable(format = "html", escape = F) %>%
+  kable_styling("striped", bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "left")
+
+```
+
+# Correlations
+```{r correlations, message=FALSE,warning=FALSE}
+melted_cormat_pearson <- .get_cor_mat_private(df,method_name="pearson")
+melted_cormat_spearman <- .get_cor_mat_private(df,method_name="spearman")
+ggplot(data = melted_cormat_pearson, aes(x=Var1, y=Var2, fill=value)) + ggtitle("Pearson") + 
+  geom_tile()
+
+ggplot(data = melted_cormat_spearman, aes(x=Var1, y=Var2, fill=value)) + ggtitle("Spearman") + 
+  geom_tile()
+
+```
+
+# Variables
+```{r variable_details, message=FALSE,warning=FALSE,results='asis', include=F}
+
+out = NULL
+interim = NULL
+html_report <- ""
+counter=1
+for (i in colnames(df)) {
+  
+  if(length(table(df[i])) > 0){
+  df_summary <- data.frame(as.matrix(summary(df[[i]])))
+  df_summary$Property <- rownames(df_summary)
+  rownames(df_summary) <- NULL
+  colnames(df_summary) <- c("Value","Property")
+  if(is.numeric(df[[i]])){
+    df_summary <- df_summary[c("Property","Value")]
+  } else{
+    df_summary <- df_summary[c("Property","Value")]
+  }
+  #colnames(df_summary) <- c("Value", "Frequency")
+  summ <- paste(
+    df_summary %>%
+    kable(format = "html", escape = F) %>%
+    kable_styling("striped", full_width = F, bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "left")
+    , collapse='\n')
+  
+  if(is.numeric(df[[i]])){
+    .p1 <- ggplot(df, aes_string(x=i)) + geom_histogram(bins=10)
+  } else{
+    .p1 <- ggplot(data=df_summary, aes(x=Property, y=Value)) + geom_bar(stat="identity")
+  }
+  counter = counter + 1
+  html_report <- paste0("#### ",i," {.tabset}
+
+##### Description
+  ")
+  out = c(out, knit_expand(text=html_report))
+  
+  distinct_count <- length(unique(df[[i]]))
+  distinct_perc <- round((distinct_count / length(df[[i]]))*100,2)
+  missing_perc <- round((sum(is.na(df[[i]])) / length(df[[i]]))*100,2)
+  df_describe <- data.frame(Property=c("Distinct count","Unique (%)","Missing (%)"),Value=c(distinct_count,distinct_perc,missing_perc))
+  desc <- paste(
+    df_describe %>%
+    kable(format = "html", escape = F) %>%
+    kable_styling("striped", full_width = F, bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "left")
+    , collapse='\n')
+  out = c(out, knit_expand(text=desc))
+  
+  html_report <- paste0("
+##### Statistics
+  ")
+  out = c(out, knit_expand(text=html_report))
+  
+  out = c(out, knit_expand(text=summ))
+  
+  html_report <- paste0("
+##### Plots
+  ")
+  out = c(out, knit_expand(text=html_report))
+  
+  out = c(out, text=.kexpand(3,'fig1',.p1, counter))
+  
+  }else{
+    
+  }
+}
+
+```
+
+`r paste(knit(text = out),collapse = '\n')`
+
+# Sample
+```{r sample_df}
+#kable(head(params$df))
+
+head(params$df) %>%
+  kable(format = "html", escape = F) %>%
+  kable_styling("striped", bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "left")
+```
