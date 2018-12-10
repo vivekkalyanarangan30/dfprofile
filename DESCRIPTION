@@ -17,8 +17,16 @@ RoxygenNote: 6.1.1
 Imports:
     knitr,
     kableExtra,
-	moments,
-	dplyr,
-	reshape2,
-	ggplot2,
-	rmarkdown
+    moments,
+    dplyr,
+    reshape2,
+    ggplot2,
+    rmarkdown
+Depends:
+knitr,
+    kableExtra,
+    moments,
+    dplyr,
+    reshape2,
+    ggplot2,
+    rmarkdown
