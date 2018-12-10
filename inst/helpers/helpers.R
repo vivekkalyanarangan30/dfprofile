@@ -152,7 +152,7 @@ get_skewed_vars <- function(df,skewness_threshold=skewness_threshold_pkg_default
 get_correlated_vars <- function(df,correlation_threshold=correlation_threshold,
                                 method_name="pearson"){
   melted_cormat <- .get_cor_mat_private(df,method=method_name)
-  melted_cormat_f_one <- get_correlated_vars_private(melted_cormat,
+  melted_cormat_f_one <- .get_correlated_vars_private(melted_cormat,
                                                      correlation_threshold=correlation_threshold )
   melted_cormat_f_one
 }
