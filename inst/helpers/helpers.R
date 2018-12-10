@@ -153,7 +153,7 @@ get_correlated_vars <- function(df,correlation_threshold=correlation_threshold_p
                                 method_name="pearson"){
   melted_cormat <- .get_cor_mat_private(df,method=method_name)
   melted_cormat_f_one <- .get_correlated_vars_private(melted_cormat,
-                                                     correlation_threshold=correlation_threshold )
+                                                     correlation_threshold)
   melted_cormat_f_one
 }
 
