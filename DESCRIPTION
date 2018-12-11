@@ -4,7 +4,7 @@ Title: Generates HTML based EDA reports on the input dataframe
 Version: 0.1.0
 Author: Vivek Kalyanarangan
 Maintainer: Vivek Kalyanarangan <vivekkalyanarangan30@gmail.com>
-Description: Generates a practical interactive and highly useful EDA report on each variable based on its type.
+Description: This package primarily generates a practical interactive and highly useful EDA report on each variable based on its type. It can also be usedd to get highly correlated variables, missing values, skewed values and constant values. It attempts to solve the tedious EDA exercise before a modelling. Its defaults are well thought of but also customizable.
     The Overview section provides summarised information in the dataframe
 	The Warnings section provides information on the highly correlated variables, variables with high cardinality, high skewness etc.
 	The Correlations section provides a correlation heatmap based on Pearson and Spearman methods
