@@ -141,14 +141,14 @@ get_skewed_vars <- function(df,skewness_threshold=skewness_threshold_pkg_default
   list(skewness_vars, values)
 }
 
-#' Returns skewness information of the dataframe
+#' Returns highly correlated variables (applies to numeric variables only)
 #'
 #' @param df The dataframe to generate the EDA report
 #' @param correlation_threshold OPTIONAL. The threshold based on which variables will be flagged as "Highly Correlated". Default value is 0.8
 #' @return melted_cormat_f_one A dataframe containing the correlated variables and their corresponding pearson correlation coefficient
 #' @examples
 #' get_correlated_vars(df)
-#' get_correlated_vars(df, correlation_threshold=20)
+#' get_correlated_vars(df, correlation_threshold=0.8)
 get_correlated_vars <- function(df,correlation_threshold=correlation_threshold_pkg_default,
                                 method_name="pearson"){
   melted_cormat <- .get_cor_mat_private(df,method=method_name)
@@ -179,7 +179,7 @@ get_correlated_vars <- function(df,correlation_threshold=correlation_threshold_p
   melted_cormat_f_one
 }
 
-#' Returns skewness information of the dataframe
+#' Returns consolidated warnings found in dataframe.
 #'
 #' @param df The dataframe to generate the EDA report
 #' @param missing_threshold OPTIONAL. The threshold based on which variables will be flagged as "Missing". Default value is 0.3
