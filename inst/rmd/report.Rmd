@@ -88,17 +88,14 @@ interim = NULL
 html_report <- ""
 counter=1
 for (i in colnames(df)) {
-  
-  if(length(table(df[i])) > 0){
+  print(i)
+  #if(length(table(df[i])) > 0){
+  if(any(is.na(df[,i]))){  
   df_summary <- data.frame(as.matrix(summary(df[[i]])))
   df_summary$Property <- rownames(df_summary)
   rownames(df_summary) <- NULL
   colnames(df_summary) <- c("Value","Property")
-  if(is.numeric(df[[i]])){
-    df_summary <- df_summary[c("Property","Value")]
-  } else{
-    df_summary <- df_summary[c("Property","Value")]
-  }
+  df_summary <- df_summary[c("Property","Value")]
   #colnames(df_summary) <- c("Value", "Frequency")
   summ <- paste(
     df_summary %>%

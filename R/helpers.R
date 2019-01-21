@@ -166,14 +166,16 @@ get_correlated_vars <- function(df,correlation_threshold=correlation_threshold_p
 
 .get_correlated_vars_private <- function(melted_cormat,correlation_threshold=correlation_threshold_pkg_default){
   melted_cormat_f <- melted_cormat %>% filter(Var1 != Var2, value > correlation_threshold)
-  melted_cormat_f_one <- data.frame(t(apply(melted_cormat_f[c("Var1","Var2")], 1, sort)))
-  if(nrow(melted_cormat_f_one) > 0){
+  if(nrow(melted_cormat_f) > 0){
+    melted_cormat_f_one <- data.frame(t(apply(melted_cormat_f[c("Var1","Var2")], 1, sort)))
     melted_cormat_f_one$value <- melted_cormat_f$value
     colnames(melted_cormat_f_one) <- c("Var1","Var2","Value")
     melted_cormat_f_one <- melted_cormat_f_one %>% group_by(Var1, Var2) %>% filter(row_number() == 1)
   } else{
-    melted_cormat_f_one$value <- NULL
-    colnames(melted_cormat_f_one) <- c("Var1","Var2","Value")
+    melted_cormat_f_one <- data.frame(Var1=character(),
+                              Var2=character(),
+                              Value=numeric(),
+                              stringsAsFactors=FALSE)
   }
 
   melted_cormat_f_one
