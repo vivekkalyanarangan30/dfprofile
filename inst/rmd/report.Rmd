@@ -72,11 +72,16 @@ df_warnings %>%
 ```{r correlations, message=FALSE,warning=FALSE}
 melted_cormat_pearson <- .get_cor_mat_private(df,method_name="pearson")
 melted_cormat_spearman <- .get_cor_mat_private(df,method_name="spearman")
-ggplot(data = melted_cormat_pearson, aes(x=Var1, y=Var2, fill=value)) + ggtitle("Pearson") + 
-  geom_tile()
 
-ggplot(data = melted_cormat_spearman, aes(x=Var1, y=Var2, fill=value)) + ggtitle("Spearman") + 
-  geom_tile()
+if(!is.null(melted_cormat_pearson)){
+  ggplot(data = melted_cormat_pearson, aes(x=Var1, y=Var2, fill=value)) + ggtitle("Pearson") + 
+    geom_tile()
+}
+
+if(!is.null(melted_cormat_spearman)){
+  ggplot(data = melted_cormat_spearman, aes(x=Var1, y=Var2, fill=value)) + ggtitle("Spearman") + 
+    geom_tile()
+}
 
 ```
 
@@ -88,15 +93,14 @@ interim = NULL
 html_report <- ""
 counter=1
 for (i in colnames(df)) {
-  print(i)
   #if(length(table(df[i])) > 0){
-  if(any(is.na(df[,i]))){  
+  if(!all(is.na(df[,i]))){  
   df_summary <- data.frame(as.matrix(summary(df[[i]])))
   df_summary$Property <- rownames(df_summary)
   rownames(df_summary) <- NULL
   colnames(df_summary) <- c("Value","Property")
   df_summary <- df_summary[c("Property","Value")]
-  #colnames(df_summary) <- c("Value", "Frequency")
+  
   summ <- paste(
     df_summary %>%
     kable(format = "html", escape = F) %>%
@@ -138,7 +142,7 @@ for (i in colnames(df)) {
   ")
   out = c(out, knit_expand(text=html_report))
   
-  out = c(out, text=.kexpand(3,'fig1',.p1, counter))
+  out = c(out, text=.kexpand(3,' ',.p1, counter))
   
   }else{
     

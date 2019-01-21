@@ -159,14 +159,16 @@ get_correlated_vars <- function(df,correlation_threshold=correlation_threshold_p
 
 .get_cor_mat_private <- function(df, method_name="pearson"){
   df_numeric <- df %>% Filter(f = is.numeric)
-  cormat_pearson <- round(cor(df_numeric, use="pairwise.complete.obs", method=method_name),2)
-  melted_cormat <- melt(cormat_pearson)
-  melted_cormat
+  if(dim(df_numeric)[2] > 0){
+    cormat_pearson <- round(cor(df_numeric, use="pairwise.complete.obs", method=method_name),2)
+    melted_cormat <- melt(cormat_pearson)
+    melted_cormat
+  }
 }
 
 .get_correlated_vars_private <- function(melted_cormat,correlation_threshold=correlation_threshold_pkg_default){
-  melted_cormat_f <- melted_cormat %>% filter(Var1 != Var2, value > correlation_threshold)
-  if(nrow(melted_cormat_f_one) > 0){
+  melted_cormat_f <- melted_cormat %>% filter(Var1 != Var2, value >= correlation_threshold)
+  if(nrow(melted_cormat_f) > 0){
     melted_cormat_f_one <- data.frame(t(apply(melted_cormat_f[c("Var1","Var2")], 1, sort)))
     melted_cormat_f_one$value <- melted_cormat_f$value
     colnames(melted_cormat_f_one) <- c("Var1","Var2","Value")
@@ -251,16 +253,17 @@ get_full_warnings <- function(df,missing_threshold=missing_threshold_pkg_default
 
   # Correlation
   melted_cormat <- .get_cor_mat_private(df)
-  melted_cormat_f_one <- .get_correlated_vars_private(melted_cormat,
-                                                      correlation_threshold)
-  if(nrow(melted_cormat_f_one) > 0){
-    correlation_vars <- data.frame(Column_Name=melted_cormat_f_one$Var1,Type="Warning",
-                                   Comments=paste0("Is highly correlated with ",
-                                                   melted_cormat_f_one$Var2,"(p=",
-                                                   melted_cormat_f_one$Value,")"))
+  if(!is.null(melted_cormat)){
+    melted_cormat_f_one <- .get_correlated_vars_private(melted_cormat,
+                                                        correlation_threshold)
+    if(nrow(melted_cormat_f_one) > 0){
+      correlation_vars <- data.frame(Column_Name=melted_cormat_f_one$Var1,Type="Warning",
+                                     Comments=paste0("Is highly correlated with ",
+                                                     melted_cormat_f_one$Var2,"(p=",
+                                                     melted_cormat_f_one$Value,")"))
 
-    df_warnings <- rbind(df_warnings, correlation_vars)
+      df_warnings <- rbind(df_warnings, correlation_vars)
+    }
   }
-
   df_warnings
 }
