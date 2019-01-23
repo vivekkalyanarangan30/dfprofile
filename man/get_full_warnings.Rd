@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.R
 \name{get_full_warnings}
 \alias{get_full_warnings}
-\title{Returns skewness information of the dataframe}
+\title{Returns consolidated warnings found in dataframe.}
 \usage{
 get_full_warnings(df, missing_threshold = missing_threshold_pkg_default,
   cardinality_threshold = cardinality_threshold_pkg_default,
@@ -24,9 +24,13 @@ get_full_warnings(df, missing_threshold = missing_threshold_pkg_default,
 df_warnings A dataframe containing all the warnings and recommendations per variable based on different threshold values
 }
 \description{
-Returns skewness information of the dataframe
+Returns consolidated warnings found in dataframe.
 }
 \examples{
 get_full_warnings(df)
-get_full_warnings(df, missing_threshold=0.3,cardinality_threshold=50,skewness_threshold=20,correlation_threshold=0.8)
+get_full_warnings(df,
+missing_threshold=0.3,
+cardinality_threshold=50,
+skewness_threshold=20,
+correlation_threshold=0.8)
 }

@@ -21,12 +21,6 @@ Imports:
     dplyr,
     reshape2,
     ggplot2,
+    knitr,
     rmarkdown
 Depends:
-    knitr,
-    kableExtra,
-    moments,
-    dplyr,
-    reshape2,
-    ggplot2,
-    rmarkdown

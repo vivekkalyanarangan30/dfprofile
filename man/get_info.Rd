@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.R
 \name{get_info}
 \alias{get_info}
-\title{Returns meta information of the dataframe like Number of variables, Number of observations, Total missing (%), Total size in memory}
+\title{Returns meta information of the dataframe like Number of variables, Number of observations, Total missing percentage, Total size in memory}
 \usage{
 get_info(df)
 }
@@ -13,7 +13,7 @@ get_info(df)
 df_info The output dataframe containing the Property and a corresponding value
 }
 \description{
-Returns meta information of the dataframe like Number of variables, Number of observations, Total missing (%), Total size in memory
+Returns meta information of the dataframe like Number of variables, Number of observations, Total missing percentage, Total size in memory
 }
 \examples{
 get_info(df)

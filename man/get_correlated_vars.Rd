@@ -2,23 +2,26 @@
 % Please edit documentation in R/helpers.R
 \name{get_correlated_vars}
 \alias{get_correlated_vars}
-\title{Returns skewness information of the dataframe}
+\title{Returns highly correlated variables (applies to numeric variables only)}
 \usage{
-get_correlated_vars(df, correlation_threshold = correlation_threshold,
+get_correlated_vars(df,
+  correlation_threshold = correlation_threshold_pkg_default,
   method_name = "pearson")
 }
 \arguments{
 \item{df}{The dataframe to generate the EDA report}
 
 \item{correlation_threshold}{OPTIONAL. The threshold based on which variables will be flagged as "Highly Correlated". Default value is 0.8}
+
+\item{method_name}{a character string indicating which correlation coefficient (or covariance) is to be computed. One of "pearson" (default), "kendall", or "spearman": can be abbreviated.}
 }
 \value{
 melted_cormat_f_one A dataframe containing the correlated variables and their corresponding pearson correlation coefficient
 }
 \description{
-Returns skewness information of the dataframe
+Returns highly correlated variables (applies to numeric variables only)
 }
 \examples{
 get_correlated_vars(df)
-get_correlated_vars(df, correlation_threshold=20)
+get_correlated_vars(df, correlation_threshold=0.8)
 }
