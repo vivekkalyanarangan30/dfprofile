@@ -1,8 +1,9 @@
 library(testthat)
 
-test_that("html report is getting generated", {
-  library(rmarkdown)
-  report_loc <- "C:/Users/FGB3140/Desktop/output.html"
-  profile_report(mtcars, report_loc)
-  expect_equal(file.exists(report_loc), T)
+test_that("get var types mtcars", {
+  var_df <- get_var_types(mtcars)
+  output <- structure(list(`Data types` = structure(1L, .Label = "numeric", class = "factor"),
+                           Frequency = "11"), .Names = c("Data types", "Frequency"), row.names = c(NA,
+                                                                                                   -1L), class = "data.frame")
+  expect_equal(var_df, output)
 })

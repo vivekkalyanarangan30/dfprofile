@@ -13,10 +13,14 @@ profile_report(df, output_file_path, missing_threshold = 0.3,
 
 \item{output_file_path}{Provide the output file path to store the html report}
 
-\item{missing_threshold}{Flag variables as "Missing" in case this threshold is crossed. This should be between 0 and 1}
+\item{missing_threshold}{OPTIONAL. The threshold based on which variables will be flagged as "Missing". Default value is 0.3}
 
-\item{cardinality_threshold}{Flag variables as "High Cardinality" in case this threshold is crossed. This should be between 0 and 1
+\item{cardinality_threshold}{OPTIONAL. The threshold based on which variables will be flagged as "High Cardinality". Default value is 50
 cardinality_threshold Flag variables as "Highly Correlated" in case this threshold is crossed. This should be between 0 and 1}
+
+\item{skewness_threshold}{OPTIONAL. The threshold based on which variables will be flagged as "Highly Skewed". Default value is 20}
+
+\item{correlation_threshold}{OPTIONAL. The threshold based on which variables will be flagged as "Highly Correlated". Default value is 0.8}
 }
 \value{
 NULL. The output HTML file is written

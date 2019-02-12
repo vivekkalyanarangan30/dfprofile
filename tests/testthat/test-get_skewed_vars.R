@@ -1,8 +1,89 @@
 library(testthat)
 
-test_that("html report is getting generated", {
-  library(rmarkdown)
-  report_loc <- "C:/Users/FGB3140/Desktop/output.html"
-  profile_report(mtcars, report_loc)
-  expect_equal(file.exists(report_loc), T)
+test_that("skewness with custom threshold", {
+  in_df <- data.frame(Var1=c(8L, 21L, 8L, 19L, 15L, 7L, 9L, 9L, 9L, 9L, 10L, 10L, 13L, 13L,
+                             10L, 11L, 11L, 5L, 10L, 8L, 1L, 7L, 12L, 10L, 4L, 12L, 6L, 13L,
+                             11L, 3L, 11L, 22L, 7L, 10L, 9L, 15L, 12L, 8L, 8L, 5L, 7L, 8L,
+                             8L, 3L, 7L, 16L, 19L, 8L, 5L, 12L, 18L, 14L, 10L, 12L, 13L, 12L,
+                             16L, 7L, 15L, 7L, 6L, 14L, 9L, 9L, 9L, 7L, 5L, 2L, 8L, 6L, 24L,
+                             25L, 11L, 14L, 9L, 16L, 12L, 8L, 4L, 13L, 20L, 5L, 13L, 13L,
+                             13L, 17L, 14L, 8L, 9L, 14L, 3L, 11L, 10L, 8L, 10L, 5L, 9L, 9L,
+                             8L, 10L, 6L, 6L, 21L, 13L, 13L, 8L, 3L, 11L, 16L, 9L, 10L, 9L,
+                             12L, 11L, 15L, 7L, 4L, 7L, 17L, 0L, 4L, 8L, 10L, 10L, 9L, 16L,
+                             17L, 8L, 14L, 4L, 8L, 21L, 4L, 16L, 6L, 5L, 5L, 7L, 13L, 7L,
+                             7L, 7L, 12L, 7L, 7L, 2L, 15L, 3L, 10L, 14L, 8L, 19L, 15L, 9L,
+                             9L, 12L, 10L, 15L, 8L, 7L, 9L, 7L, 9L, 22L, 11L, 30L, 11L, 12L,
+                             9L, 10L, 15L, 4L, 15L, 6L, 18L, 6L, 5L, 9L, 12L, 10L, 10L, 13L,
+                             4L, 6L, 9L, 13L, 9L, 14L, 10L, 9L, 13L, 5L, 14L, 12L, 6L, 10L,
+                             17L, 8L, 11L, 7L, 13L, 6L, 18L, 7L, 7L, 17L, 7L, 8L, 16L, 5L,
+                             16L, 4L, 9L, 13L, 10L, 12L, 11L, 14L, 5L, 13L, 9L, 4L, 9L, 8L,
+                             13L, 8L, 8L, 9L, 19L, 5L, 9L, 4L, 15L, 6L, 6L, 4L, 10L, 15L,
+                             10L, 5L, 0L, 5L, 4L, 6L, 7L, 5L, 15L, 12L, 7L, 7L, 13L, 8L, 14L,
+                             17L, 8L, 8L, 3L, 6L, 17L, 11L, 11L, 7L, 11L, 7L, 7L, 12L, 16L,
+                             8L, 10L, 9L, 10L, 9L, 22L, 22L, 13L, 5L, 15L, 10L, 15L, 8L, 6L,
+                             6L, 9L, 13L, 7L, 10L, 9L, 9L, 19L, 10L, 14L, 11L, 8L, 7L, 13L,
+                             7L, 14L, 11L, 9L, 6L, 13L, 14L, 14L, 4L, 8L, 18L, 5L, 7L, 9L,
+                             6L, 12L, 7L, 10L, 13L, 14L, 14L, 9L, 9L, 10L, 12L, 7L, 21L, 11L,
+                             12L, 13L, 20L, 6L, 8L, 12L, 12L, 13L, 6L, 16L, 9L, 8L, 5L, 14L,
+                             10L, 12L, 8L, 15L, 10L, 18L, 7L, 10L, 8L, 14L, 13L, 9L, 13L,
+                             11L, 18L, 11L, 8L, 8L, 11L, 14L, 4L, 5L, 12L, 3L, 10L, 15L, 13L,
+                             2L, 2L, 13L, 14L, 13L, 7L, 9L, 6L, 12L, 10L, 1L, 8L, 13L, 13L,
+                             4L, 11L, 17L, 6L, 24L, 7L, 10L, 10L, 10L, 7L, 10L, 11L, 12L,
+                             19L, 9L, 6L, 8L, 5L, 9L, 13L, 7L, 8L, 14L, 11L, 5L, 13L, 7L,
+                             5L, 6L, 14L, 10L, 18L, 20L, 10L, 10L, 8L, 13L, 13L, 14L, 13L,
+                             4L, 15L, 2L, 9L, 5L, 17L, 11L, 8L, 7L, 7L, 11L, 8L, 10L, 26L,
+                             11L, 8L, 8L, 13L, 16L, 7L, 12L, 9L, 11L, 12L, 12L, 10L, 6L, 14L,
+                             6L, 8L, 9L, 8L, 14L, 9L, 15L, 14L, 4L, 10L, 13L, 10L, 11L, 14L,
+                             8L, 12L, 8L, 12L, 8L, 26L, 5L, 9L, 15L, 8L, 9L, 5L, 18L, 12L,
+                             11L, 9L, 13L, 6L, 7L, 9L, 5L, 7L, 12L, 7L, 7L, 7L, 14L, 15L,
+                             4L, 10L, 8L, 4L, 17L, 13L, 20L, 12L, 5L, 14L, 14L, 14L, 6L, 7L,
+                             2L, 11L, 8L, 12L, 17L, 7L, 16L, 12L, 15L, 10L, 10L, 3L, 11L,
+                             6L, 8L, 8L, 13L, 5L, 5L, 18L, 21L, 13L, 13L, 11L, 8L, 7L, 4L,
+                             4L, 7L, 21L, 4L, 6L, 3L, 6L, 16L, 13L, 8L, 5L, 8L, 10L, 8L, 9L,
+                             8L, 9L, 10L, 12L, 5L, 9L, 10L, 6L, 13L, 14L, 10L, 8L, 6L, 4L,
+                             16L, 6L, 8L, 10L, 10L, 8L, 9L, 11L, 6L, 8L, 10L, 15L, 11L, 12L,
+                             12L, 15L, 13L, 10L, 11L, 12L, 5L, 7L, 5L, 5L, 11L, 6L, 6L, 18L,
+                             10L, 4L, 10L, 17L, 12L, 10L, 10L, 10L, 25L, 7L, 15L, 9L, 7L,
+                             20L, 9L, 7L, 5L, 13L, 6L, 12L, 8L, 11L, 7L, 8L, 10L, 4L, 24L,
+                             21L, 11L, 11L, 9L, 14L, 7L, 5L, 7L, 8L, 4L, 10L, 18L, 21L, 0L,
+                             20L, 8L, 19L, 8L, 13L, 2L, 13L, 7L, 4L, 11L, 16L, 14L, 6L, 11L,
+                             9L, 10L, 14L, 4L, 8L, 16L, 8L, 2L, 11L, 9L, 15L, 19L, 13L, 14L,
+                             5L, 15L, 14L, 21L, 5L, 9L, 14L, 11L, 15L, 3L, 5L, 5L, 14L, 8L,
+                             8L, 5L, 9L, 9L, 7L, 8L, 19L, 11L, 18L, 3L, 12L, 4L, 12L, 10L,
+                             11L, 13L, 11L, 0L, 18L, 4L, 18L, 11L, 15L, 8L, 16L, 11L, 9L,
+                             8L, 11L, 11L, 16L, 10L, 15L, 9L, 16L, 3L, 8L, 11L, 15L, 7L, 9L,
+                             9L, 8L, 13L, 8L, 6L, 9L, 12L, 11L, 24L, 4L, 3L, 3L, 12L, 3L,
+                             16L, 20L, 13L, 12L, 4L, 10L, 8L, 5L, 7L, 8L, 14L, 5L, 15L, 10L,
+                             13L, 10L, 9L, 5L, 10L, 11L, 5L, 8L, 11L, 19L, 6L, 1L, 8L, 16L,
+                             14L, 11L, 6L, 11L, 4L, 6L, 9L, 8L, 16L, 12L, 10L, 5L, 10L, 8L,
+                             12L, 4L, 15L, 11L, 9L, 16L, 7L, 8L, 16L, 9L, 11L, 16L, 8L, 11L,
+                             16L, 9L, 10L, 11L, 5L, 9L, 9L, 11L, 9L, 5L, 11L, 6L, 8L, 11L,
+                             13L, 8L, 17L, 9L, 12L, 4L, 5L, 12L, 17L, 5L, 15L, 9L, 22L, 9L,
+                             5L, 14L, 4L, 6L, 8L, 15L, 6L, 9L, 5L, 14L, 6L, 21L, 13L, 6L,
+                             17L, 28L, 12L, 18L, 18L, 8L, 13L, 10L, 7L, 16L, 9L, 6L, 12L,
+                             8L, 5L, 13L, 6L, 16L, 8L, 7L, 9L, 20L, 10L, 14L, 13L, 11L, 6L,
+                             5L, 5L, 7L, 10L, 3L, 9L, 15L, 9L, 8L, 12L, 11L, 7L, 3L, 5L, 18L,
+                             12L, 11L, 7L, 11L, 16L, 17L, 5L, 12L, 5L, 10L, 3L, 7L, 10L, 14L,
+                             12L, 15L, 11L, 12L, 24L, 8L, 13L, 17L, 10L, 9L, 18L, 8L, 6L,
+                             13L, 8L, 10L, 9L, 17L, 18L, 19L, 7L, 12L, 15L, 12L, 13L, 9L,
+                             13L, 7L, 9L, 10L, 14L, 10L, 7L, 6L, 12L, 10L, 11L, 7L, 13L, 12L,
+                             10L, 5L, 10L, 10L, 5L, 25L, 5L, 9L, 14L, 13L, 5L, 11L, 12L, 10L,
+                             7L, 8L, 10L, 10L, 10L, 4L, 12L, 13L, 11L, 7L, 10L, 9L, 10L, 13L,
+                             7L, 8L, 9L, 13L, 11L, 11L, 9L, 14L, 7L, 7L, 14L, 11L, 10L, 9L,
+                             2L, 11L, 11L, 5L, 7L, 4L, 11L, 3L, 9L, 10L, 8L, 17L, 9L, 13L,
+                             6L, 8L, 6L, 15L, 9L, 17L, 5L, 15L, 9L, 5L, 16L, 8L, 10L, 13L,
+                             9L, 2L, 12L, 12L, 18L, 3L, 13L, 2L, 6L, 16L, 15L, 17L), Var2=rnorm(100, 20, 2))
+  skew_df <- get_skewed_vars(in_df, skewness_threshold = 0.5)
+  output <- list(structure(list(skewness_vars = 0.694175482322378, Column.Name = "Var1"), .Names = c("skewness_vars",
+                                                                                                     "Column.Name"), row.names = "Var1", class = "data.frame"), structure(0.694175482322378, .Names = "Var1"))
+  expect_equal(skew_df, output)
+})
+
+test_that("no high skewness with default threshold", {
+  in_df <- data.frame(Var1=rnbinom(1000, 10, .5), Var2=rnorm(100, 20, 2))
+  skew_df <- get_skewed_vars(in_df)
+  output <- list(structure(list(Column.Name = character(0), skewness_vars = character(0)), .Names = c("Column.Name",
+                                                                                                      "skewness_vars"), row.names = integer(0), class = "data.frame"),
+                 NULL)
+  expect_equal(skew_df, output)
 })
